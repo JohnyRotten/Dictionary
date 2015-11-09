@@ -39,6 +39,7 @@ namespace Dictionary
                     // ignored
                 }
             }
+            OnUpdateListEvent();
         }
 
         public string[] Items
@@ -64,8 +65,14 @@ namespace Dictionary
             var words = db.GetTable<Word>();
             words.DeleteAllOnSubmit(words);
             db.SubmitChanges();
+            OnUpdateListEvent();
         }
 
         private string ConnectionString => ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+
+        protected virtual void OnUpdateListEvent()
+        {
+            UpdateListEvent?.Invoke();
+        }
     }
 }

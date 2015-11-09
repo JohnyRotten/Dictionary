@@ -16,6 +16,7 @@ namespace Dictionary
             {
                 _words.Add(item);
             }
+            OnUpdateListEvent();
         }
 
         public string[] Items => _words.ToArray();
@@ -30,6 +31,12 @@ namespace Dictionary
         public void Clear()
         {
             _words.Clear();
+            OnUpdateListEvent();
+        }
+
+        protected virtual void OnUpdateListEvent()
+        {
+            UpdateListEvent?.Invoke();
         }
     }
 }
