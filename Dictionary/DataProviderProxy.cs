@@ -1,30 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Dictionary
 {
     class DataProviderProxy : IDataProvider
 
     {
-        private IDataProvider _dataProvider;
+        public IDataProvider DataProvider { get; set; }
+
         private HashSet<string> _words = new HashSet<string>(); 
 
         public DataProviderProxy(IDataProvider dataProvider)
         {
-            _dataProvider = dataProvider;
-            _dataProvider.UpdateListEvent += OnUpdateListEvent;
-            _dataProvider.UpdateListEvent += UpdateWords;
+            DataProvider = dataProvider;
+            DataProvider.UpdateListEvent += ParentListChanged;
             UpdateWords();
+        }
+
+        private void ParentListChanged()
+        {
+            UpdateWords();
+            OnUpdateListEvent();
         }
 
         private void UpdateWords()
         {
             _words.Clear();
-            foreach (var item in _dataProvider.Items)
+            foreach (var item in DataProvider.Items)
             {
                 _words.Add(item);
             }
@@ -34,7 +37,7 @@ namespace Dictionary
 
         public void AddItems(string[] items)
         {
-            _dataProvider.AddItems(items);
+            DataProvider.AddItems(items);
         }
 
         public string[] Items => _words.ToArray();
@@ -48,7 +51,7 @@ namespace Dictionary
 
         public void Clear()
         {
-            _dataProvider.Clear();
+            DataProvider.Clear();
         }
 
         protected virtual void OnUpdateListEvent()

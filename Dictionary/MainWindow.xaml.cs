@@ -1,19 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Microsoft.Win32;
 
 namespace Dictionary
@@ -29,19 +18,22 @@ namespace Dictionary
         {
             InitializeComponent();
 
-            _dataProvider = new DataProviderProxy(new DbDataProvider());
+            _dataProvider = new DataProviderProxy(new DbDataProvider(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString));
 
             _dataProvider.UpdateListEvent += ShowWordList;
 
             LoadButton.Click += ClickLoadButtonHandler;
+            SaveButton.Click += ClickSaveButtomHandler;
             SearchBox.TextChanged += SearchBoxInputHandler;
 
             ShowWordList();
         }
 
+        protected string[] GetWords => SearchBox.Text == "" ? _dataProvider.Items : _dataProvider.Search(SearchBox.Text);
+
         private void ShowWordList()
         {
-            var items = SearchBox.Text == "" ? _dataProvider.Items : _dataProvider.Search(SearchBox.Text);
+            var items = GetWords;
             WordList.Children.Clear();
             foreach (var item in items)
             {
@@ -60,8 +52,20 @@ namespace Dictionary
                 var line = reader.ReadLine();
                 if (line != null) words.Add(line.Trim());
             }
+            reader.Close();
 
             if (words.Count != 0) _dataProvider.AddItems(words.ToArray());
+        }
+
+        private void SaveFileData(string fileName)
+        {
+            var writter = new StreamWriter(new FileStream(fileName, FileMode.OpenOrCreate));
+            foreach (var word in GetWords)
+            {
+                writter.WriteLine(word);
+            }
+            writter.Close();
+
         }
 
         private void SearchBoxInputHandler(object sender, TextChangedEventArgs textChangedEventArgs)
@@ -69,14 +73,28 @@ namespace Dictionary
             ShowWordList();
         }
 
-        private async void ClickLoadButtonHandler(object sender, RoutedEventArgs e)
+        private void ClickLoadButtonHandler(object sender, RoutedEventArgs e)
         {
-            var openDialog = new OpenFileDialog();
-            openDialog.Filter = "Text(*.txt)|*.txt";
-            openDialog.CheckFileExists = true;
-            openDialog.Multiselect = false;
+            var openDialog = new OpenFileDialog
+            {
+                Filter = "Text(*.txt)|*.txt",
+                CheckFileExists = true,
+                Multiselect = false
+            };
             if (openDialog.ShowDialog() == false) return;
             LoadFileData(openDialog.FileName);
+        }
+
+        private void ClickSaveButtomHandler(object sender, RoutedEventArgs e)
+        {
+            var openDialog = new OpenFileDialog
+            {
+                Filter = "Text(*.txt)|*.txt",
+                Multiselect = false,
+                CheckFileExists = false
+            };
+            if (openDialog.ShowDialog() == false) return;
+            SaveFileData(openDialog.FileName);
         }
     }
 }

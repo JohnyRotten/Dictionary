@@ -1,14 +1,18 @@
-﻿using NUnit.Framework;
+﻿using System.Configuration;
+using NUnit.Framework;
 
 namespace Dictionary
 {
     [TestFixture]
     public class DbDataProviderTest
     {
+
+        private IDataProvider DP => new DbDataProvider(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+
         [Test]
         public void AddItemsTest()
         {
-            IDataProvider dp = new DbDataProvider();
+            IDataProvider dp = DP;
             dp.Clear();
             dp.AddItems(AddedItems);
             Assert.AreEqual(4, dp.Items.Length);
@@ -18,7 +22,7 @@ namespace Dictionary
         [Test]
         public void ClearTest()
         {
-            IDataProvider dp = new DbDataProvider();
+            IDataProvider dp = DP;
             dp.Clear();
             dp.AddItems(AddedItems);
             Assert.AreEqual(AddedItems.Length, dp.Items.Length);
@@ -29,7 +33,7 @@ namespace Dictionary
         [Test]
         public void FindItemsTest()
         {
-            IDataProvider dp = new DbDataProvider();
+            IDataProvider dp = DP;
             dp.Clear();
             dp.AddItems(AddedItems);
             Assert.AreEqual(2, dp.Search("a").Length);
@@ -39,7 +43,7 @@ namespace Dictionary
         [Test]
         public void AddNewItemTest()
         {
-            IDataProvider dp = new DbDataProvider();
+            IDataProvider dp = DP;
             dp.Clear();
             dp.AddItems(AddedItems);
             int countBefore = dp.Items.Length;
@@ -53,7 +57,7 @@ namespace Dictionary
         [Test]
         public void AddContaintsItemTest()
         {
-            IDataProvider dp = new DbDataProvider();
+            IDataProvider dp = DP;
             dp.Clear();
             dp.AddItems(AddedItems);
             int countBefore = dp.Items.Length;

@@ -11,8 +11,8 @@
             <TextBox x:Name="SearchBox" Width="200" Height="30" Margin="5" />
         </WrapPanel>
         <WrapPanel DockPanel.Dock="Bottom" HorizontalAlignment="Center" ItemHeight="40" ItemWidth="150">
-            <Button x:Name="LoadButton" Margin="5">Загрузить базу данных</Button>
-            <Button x:Name="AddButton" Margin="5">Создать базу данных</Button>
+            <Button x:Name="LoadButton" Margin="5">Добавить данные</Button>
+            <Button x:Name="SaveButton" Margin="5">Сохранить результат</Button>
         </WrapPanel>
         <ScrollViewer Padding="5">
             <StackPanel x:Name="WordList"></StackPanel>
