@@ -26,5 +26,10 @@ namespace Dictionary
             var query = from w in _words where regex.IsMatch(w) select w;
             return query.ToArray();
         }
+
+        public void Clear()
+        {
+            _words.Clear();
+        }
     }
 }

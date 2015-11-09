@@ -13,5 +13,7 @@ namespace Dictionary
         string[] Items { get; }
 
         string[] Search(string exp);
+
+        void Clear();
     }
 }
