@@ -18,6 +18,7 @@ namespace Dictionary
             _dataProvider = dataProvider;
             _dataProvider.UpdateListEvent += OnUpdateListEvent;
             _dataProvider.UpdateListEvent += UpdateWords;
+            UpdateWords();
         }
 
         private void UpdateWords()

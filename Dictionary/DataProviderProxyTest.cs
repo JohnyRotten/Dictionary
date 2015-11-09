@@ -27,6 +27,15 @@ namespace Dictionary
         }
 
         [Test]
+        public void StartSetForProxy()
+        {
+            IDataProvider dp = new RamDataProvider();
+            dp.AddItems(AddedItems);
+            IDataProvider proxy = new DataProviderProxy(dp);
+            Assert.AreEqual(dp.Items.Length, proxy.Items.Length);
+        }
+
+        [Test]
         public void FindItemsTest()
         {
             IDataProvider dp = new DataProviderProxy(new RamDataProvider());
